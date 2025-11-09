@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Çalışma Alanımız</title> <!-- V15 Başlığı Korundu -->
+    <!-- Ses kütüphanesi kaldırıldı -->
+    <style>
+        /* --- 1. Atmosfer ve Canlı Arka Plan --- */
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600;700&display=swap');
+
+        :root {
+            /* === ROMANTİZM MODU (VARSAYILAN) === */
+            --bg-main: #f3e5f5;
+            --bg-gradient: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            --container-bg: rgba(255, 255, 255, 0.85);
+            --primary-color: #6a1b9a;
+            --secondary-color: #ab47bc;
+            --text-color: #333;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+
+            /* === ODAKLANMA MODU (focus-mode) === */
+            --bg-main-focus: #0f172a;
+            --bg-gradient-focus: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --container-bg-focus: rgba(30, 41, 59, 0.85); /* #1e293b with opacity */
+            --primary-color-focus: #c084fc; /* Canlı mor */
+            --secondary-color-focus: #9333ea; /* Koyu canlı mor */
+            --text-color-focus: #e0f2fe; /* Çok açık mavi/beyaz */
+
+            /* === RENK PALETİ (Değişmez) === */
+            --c1: #FFADAD; --c2: #FFD6A5; --c3: #FDFFB6; --c4: #CAFFBF;
+            --c5: #9BF6FF; --c6: #A0C4FF; --c7: #BDB2FF; --c8: #FFC6FF;
+            --c9: #E63946; --c10: #F4A261; --c11: #F2CC8F; --c12: #2A9D8F;
+            --c13: #264653; --c14: #E76F51; --c15: #A2D2FF; --c16: #D00000;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            background-image: var(--bg-gradient);
+            font-family: 'Quicksand', sans-serif;
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden; /* Animasyonlar için */
+            transition: background-image 0.5s ease-out;
+        }
+        /* Odak Modu Tema Geçişi */
+        body.focus-mode {
+            background-color: var(--bg-main-focus);
+            background-image: var(--bg-gradient-focus);
+            color: var(--text-color-focus);
+        }
+
+        /* Canlı parçacık arka planı */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="%23ffffff" opacity="0.3"/></svg>');
+            background-size: 100px 100px;
+            animation: float 25s linear infinite;
+            z-index: -1;
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100px); }
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            color: var(--primary-color);
+            text-align: center;
+            font-size: 40px;
+            margin-bottom: 20px;
+            z-index: 10;
+            transition: color 0.5s ease-out;
+        }
+        body.focus-mode h1 { color: var(--primary-color-focus); }
+
+
+        /* --- 2. ŞİFRE EKRANI --- */
+        #password-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            color: white;
+            flex-direction: column;
+            font-family: 'Quicksand', sans-serif;
+        }
+        #password-box {
+            background: #111;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+        }
+        #password-box h2 {
+            font-family: 'Quicksand', sans-serif;
+            color: white;
+            margin-top: 0;
+            font-weight: 600;
+        }
+        #password-input {
+            font-size: 18px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 2px solid #555;
+            background: #222;
+            color: white;
+            text-align: center;
+            margin: 15px 0;
+        }
+        #password-button {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 50px;
+            background: #fff;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #password-button:hover { background: #ccc; }
+        #password-error {
+            color: #FFADAD;
+            height: 20px;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+        
+        @keyframes shake {
+           10%, 90% { transform: translate3d(-1px, 0, 0); }
+           20%, 80% { transform: translate3d(2px, 0, 0); }
+           30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+           40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+        .shake {
+            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+
+        /* --- 3. Ana Yerleşim (Başlangıçta Gizli) --- */
+        #loading-indicator {
+            font-size: 18px; font-weight: 600; color: var(--primary-color);
+            text-align: center; padding: 20px;
+            display: none; /* Başlangıçta gizli */
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            max-width: 1100px;
+            width: 100%;
+            z-index: 10;
+            display: none; /* Başlangıçta gizli */
+        }
+        
+        .container {
+            background: var(--container-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            box-sizing: border-box;
+            transition: background-color 0.5s ease-out;
+        }
+        body.focus-mode .container { background: var(--container-bg-focus); }
+
+        /* --- 4. Jenga Kulesi Stili (V12'deki temiz görünüm) --- */
+        .jenga-tower-container { perspective: 800px; }
+        .jenga-tower {
+            width: 300px; height: 500px;
+            display: flex;
+            flex-direction: column-reverse; 
+            justify-content: flex-start;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            padding: 10px;
+            overflow-y: auto;
+            border: 1px solid rgba(0,0,0,0.1);
+            transform: none; /* Yamukluk kaldırıldı */
+            transform-origin: bottom center;
+            transition: transform 0.5s;
+        }
+        .jenga-layer {
+            display: flex;
+            margin-bottom: 2px;
+            position: relative;
+            height: 22px;
+        }
+        .jenga-layer.horizontal { justify-content: space-between; }
+        .jenga-layer.horizontal .mini-block,
+        .jenga-layer.horizontal .placeholder-block { width: 32%; height: 22px; }
+        
+        .jenga-layer.vertical { flex-direction: column; align-items: center; height: 72px; }
+        .jenga-layer.vertical .mini-block,
+        .jenga-layer.vertical .placeholder-block { width: 90%; height: 22px; margin-top: 2px; }
+        .jenga-layer.vertical .mini-block:first-child,
+        .jenga-layer.vertical .placeholder-block:first-child { margin-top: 0; }
+        
+        .jenga-layer .placeholder-block {
+             visibility: hidden; 
+        }
+        
+        .mini-block {
+            border-radius: 3px;
+            border: 1px solid rgba(0,0,0,0.4); 
+            animation: placeBlock 0.3s ease-out; 
+            
+            /* V12: V10'daki basit parlama/gölge efekti */
+            background-image: 
+                linear-gradient(
+                    rgba(255, 255, 255, 0.2) 0%,
+                    rgba(255, 255, 255, 0.05) 50%,
+                    rgba(0, 0, 0, 0.05) 51%,
+                    rgba(0, 0, 0, 0.2) 100%
+                );
+        }
+        @keyframes placeBlock {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 5. Zamanlayıcı Stili --- */
+        .timer-controls { text-align: center; }
+        #timer {
+            font-family: 'Pacifico', cursive;
+            font-size: 72px;
+            color: var(--primary-color);
+            margin: 10px 0;
+            transition: color 0.5s ease-out;
+        }
+        body.focus-mode #timer { color: var(--primary-color-focus); }
+        
+        .timer-inputs { margin-bottom: 20px; font-size: 16px; }
+        .timer-inputs label { font-weight: 600; }
+        .timer-inputs input { width: 60px; font-size: 16px; padding: 5px; border-radius: 5px; border: 1px solid #ccc; text-align: center; }
+        
+        .timer-buttons button { 
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600; font-size: 16px;
+            padding: 10px 20px; border: none;
+            border-radius: 50px; color: white;
+            cursor: pointer; transition: all 0.3s ease;
+            margin: 0 5px;
+        }
+        #startButton { background-color: #4caf50; }
+        #pauseButton { background-color: #ff9800; }
+        #resetButton { background-color: #f44336; }
+        #startButton:disabled { background-color: #9e9e9e; }
+        #pauseButton:disabled { background-color: #9e9e9e; }
+        #resetButton:disabled { background-color: #9e9e9e; }
+
+        /* --- 6. Sohbet Kutusu ve Menü --- */
+        .chat-container {
+            background: var(--container-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            height: 645px;
+            position: relative;
+            transition: background-color 0.5s ease-out; 
+        }
+        body.focus-mode .chat-container { background: var(--container-bg-focus); }
+        
+        .chat-container h3 {
+            font-family: 'Pacifico', cursive;
+            color: var(--primary-color);
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            transition: color 0.5s ease-out;
+        }
+        body.focus-mode .chat-container h3 { color: var(--primary-color-focus); }
+        
+        .chat-menu-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none; border: none;
+            font-size: 24px; font-weight: bold;
+            color: #888;
+            cursor: pointer; padding: 5px;
+            border-radius: 50%; line-height: 1;
+        }
+        .chat-menu-btn:hover { background-color: rgba(0,0,0,0.1); }
+        body.focus-mode .chat-menu-btn:hover { background-color: rgba(255,255,255,0.1); }
+        
+        .chat-menu-popover {
+            display: none; 
+            position: absolute;
+            top: 55px; right: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+            overflow: hidden;
+        }
+        #clear-chat-button-popover {
+            background: none; border: none;
+            padding: 12px 20px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            color: #d00000; 
+            cursor: pointer; width: 100%;
+            text-align: left; font-size: 14px;
+        }
+        #clear-chat-button-popover:hover { background-color: #fce8e8; }
+        
+        body.focus-mode .chat-menu-popover { background: #1f2a47; } 
+        body.focus-mode #clear-chat-button-popover { color: #ffadad; }
+        body.focus-mode #clear-chat-button-popover:hover { background-color: #2c3a5a; }
+
+
+        #chat-messages {
+            flex-grow: 1; padding: 15px;
+            overflow-y: auto; display: flex;
+            flex-direction: column; gap: 10px;
+        }
+        .message {
+            padding: 8px 14px; border-radius: 18px;
+            max-width: 80%; word-wrap: break-word;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 15px;
+        }
+        .message.sent { align-self: flex-end; background: #dcf8c6; color: #333; }
+        .message.received { align-self: flex-start; background: #fff; }
+        
+        body.focus-mode .message.sent { background: #22c55e; color: #fff; }
+        body.focus-mode .message.received { background: #334155; color: #e0f2fe; }
+
+        .message-time {
+            font-size: 11px;
+            color: #888;
+            margin-top: 3px;
+            text-align: right;
+        }
+        .message.received .message-time { text-align: left; }
+        body.focus-mode .message-time { color: #94a3b8; }
+        
+        .chat-input-area { padding: 10px; border-top: 1px solid rgba(0,0,0,0.1); }
+        body.focus-mode .chat-input-area { border-top-color: rgba(255,255,255,0.1); }
+        
+        .flirt-slider {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .flirt-arrow {
+            background: none; border: none;
+            font-size: 20px; cursor: pointer;
+            padding: 5px; border-radius: 50%;
+            width: 30px; height: 30px;
+            color: var(--text-color);
+        }
+        body.focus-mode .flirt-arrow { color: var(--text-color-focus); }
+        
+        .flirt-arrow:hover { background-color: rgba(0,0,0,0.1); }
+        .flirt-arrow:disabled { opacity: 0.3; cursor: not-allowed; }
+        body.focus-mode .flirt-arrow:hover { background-color: rgba(255,255,255,0.1); }
+
+        #flirt-buttons-window { flex-grow: 1; overflow: hidden; margin: 0 5px; }
+        #flirt-buttons-container {
+            display: flex;
+            transition: transform 0.3s ease-out;
+            gap: 5px; 
+        }
+        .flirt-button {
+            background: none; border: none;
+            font-size: 24px; cursor: pointer;
+            transition: transform 0.2s;
+            padding: 5px; border-radius: 8px;
+            min-width: 40px; 
+            text-align: center;
+        }
+        .flirt-button:hover { 
+            transform: scale(1.3); 
+            background-color: rgba(0,0,0,0.05); 
+        }
+        body.focus-mode .flirt-button:hover { background-color: rgba(255,255,255,0.1); }
+
+        .chat-input { display: flex; }
+        .chat-input input {
+            flex-grow: 1; border: 1px solid #ccc;
+            border-radius: 20px; padding: 10px 15px;
+            font-size: 14px; margin-right: 10px;
+            background-color: #fff;
+            color: #333;
+        }
+        body.focus-mode .chat-input input {
+            background-color: #1e293b;
+            border-color: #334155;
+            color: #e0f2fe;
+        }
+
+        .chat-input button {
+            border: none; background: var(--secondary-color);
+            color: white; border-radius: 50%;
+            width: 40px; height: 40px;
+            font-size: 18px; cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .chat-input button:hover { background: var(--primary-color); }
+        body.focus-mode .chat-input button { background: var(--secondary-color-focus); }
+        body.focus-mode .chat-input button:hover { background: var(--primary-color-focus); }
+
+        /* --- 7. Renk Seçme Modalı (V15: OYLAMA SİSTEMİ) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none; align-items: center;
+            justify-content: center; z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: white; padding: 30px;
+            border-radius: 20px; text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        body.focus-mode .modal-content { background: #1e293b; }
+        
+        .modal-content h2 {
+            font-family: 'Pacifico', cursive;
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        body.focus-mode .modal-content h2 { color: var(--primary-color-focus); }
+        
+        #color-palette {
+            display: grid;
+            grid-template-columns: repeat(8, 30px);
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        .color-swatch {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.2s;
+            position: relative; /* V15: Oylama göstergeleri için */
+        }
+        .color-swatch:hover { transform: scale(1.1); }
+        
+        /* V15: Oylama Göstergeleri */
+        .vote-indicator {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 15px; height: 15px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            line-height: 15px;
+            text-align: center;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        .vote-indicator.partner {
+            background: #aaa;
+            right: auto;
+            left: -5px;
+        }
+        body.focus-mode .vote-indicator { background: var(--primary-color-focus); }
+        body.focus-mode .vote-indicator.partner { background: #555; }
+
+
+        .modal-content button {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600; font-size: 16px;
+            padding: 10px 20px; border: none;
+            border-radius: 50px; background: var(--secondary-color);
+            color: white; cursor: pointer;
+            margin: 0 5px;
+        }
+        .modal-content button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+        body.focus-mode .modal-content button { background: var(--secondary-color-focus); }
+        body.focus-mode .modal-content button:disabled { background-color: #555; }
+        
+        .modal-content button.confirm-btn { background-color: #f44336; }
+        .modal-content button.cancel-btn { background-color: #aaa; }
+
+
+        /* --- 8. Flört Animasyon Stilleri --- */
+        .flirt-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 2000;
+            display: none; 
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            overflow: hidden; 
+        }
+        .flirt-emoji-pop {
+            font-size: 150px;
+            animation: flirt-pop 1.5s ease-out forwards;
+        }
+        @keyframes flirt-pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            30% { transform: scale(1.2); opacity: 1; }
+            50% { transform: rotate(-10deg) scale(1.1); }
+            70% { transform: rotate(10deg) scale(1.1); }
+            100% { transform: scale(1) translateY(100px); opacity: 0; }
+        }
+        .heart-storm-emoji {
+            position: absolute;
+            font-size: 30px; 
+            animation: heart-fall 2s linear forwards;
+            opacity: 0;
+        }
+        @keyframes heart-fall {
+            0% { transform: translateY(-20vh); opacity: 1; }
+            100% { transform: translateY(120vh); opacity: 1; }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Şifre Ekranı -->
+    <div class="modal-overlay" id="password-overlay" style="display: flex;">
+        <div id="password-box">
+            <h2>Özel Giriş</h2>
+            <p>Lütfen şifreyi girin:</p>
+            <input type="password" id="password-input" placeholder="Şifre">
+            <br>
+            <button id="password-button">Giriş Yap</button>
+            <div id="password-error"></div>
+        </div>
+    </div>
+    
+    <!-- Flört Animasyon Katmanı -->
+    <div class="flirt-overlay" id="flirt-overlay-main">
+        <!-- Emojiler buraya JS ile eklenecek -->
+    </div>
+
+    <h1>Çalışma Alanımız</h1> <!-- V15 Başlığı -->
+    <div id="loading-indicator">Veritabanına bağlanılıyor...</div>
+
+    <div class="main-layout">
+        
+        <!-- === SOL PANEL (Zamanlayıcı ve Kule) === -->
+        <div class="left-panel">
+            <div class="container timer-controls">
+                <div class="timer-inputs">
+                    <label for="minutesInput">Süre (dakika):</label>
+                    <input type="number" id="minutesInput" value="1" min="1">
+                </div>
+                <div id="timer">01:00</div>
+                <div class="timer-buttons">
+                    <button id="startButton">Başlat</button>
+                    <button id="pauseButton" disabled>Duraklat</button>
+                    <button id="resetButton" disabled>Sıfırla</button>
+                </div>
+            </div>
+            <div class="jenga-tower-container">
+                <div class="jenga-tower" id="jengaTower">
+                    <!-- Jenga tuğlaları buraya gelecek -->
+                </div>
+            </div>
+        </div>
+
+        <!-- === SAĞ PANEL (Sohbet) === -->
+        <div class="chat-container">
+            <h3>Sohbet Kutusu</h3>
+            <button id="chat-menu-button" class="chat-menu-btn">⋮</button>
+            <div id="chat-menu-popover" class="chat-menu-popover">
+                <button id="clear-chat-button-popover">Sohbeti Temizle</button>
+            </div>
+            
+            <div id="chat-messages"><!-- Mesajlar buraya gelecek --></div>
+            
+            <div class="chat-input-area">
+                <div class="flirt-slider">
+                    <button id="flirt-prev" class="flirt-arrow" disabled>◀</button>
+                    <div id="flirt-buttons-window">
+                        <div id="flirt-buttons-container">
+                            <!-- Emojiler JS ile buraya dolacak -->
+                        </div>
+                    </div>
+                    <button id="flirt-next" class="flirt-arrow">▶</button>
+                </div>
+                
+                <div class="chat-input">
+                    <input type="text" id="chatInput" placeholder="Mesaj yaz...">
+                    <button id="sendButton">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === Renk Seçme Modalı (V15: OYLAMA) === -->
+    <div class="modal-overlay" id="colorModal">
+        <div class="modal-content">
+            <h2>Süre Doldu! 🎉</h2>
+            <p>Anlaşma Zamanı! İkiniz de bir renk seçin.<br>Aynı rengi seçtiğinizde tuğla eklenecek.</p>
+            <div id="color-palette">
+                <!-- Renkler JS ile eklenecek -->
+            </div>
+            <!-- Butonun durumu V15 mantığıyla yönetilecek -->
+            <button id="addBlockButton" disabled>Lütfen anlaşma sağlayın...</button>
+        </div>
+    </div>
+    
+    <!-- Sohbet Temizleme Modalı -->
+    <div class="modal-overlay" id="clear-chat-modal-overlay">
+        <div class="modal-content">
+            <h2>Emin Misin?</h2>
+            <p>Tüm sohbet geçmişi kalıcı olarak silinecek.<br>(Jenga kuleniz etkilenmez.)</p>
+            <button id="confirm-clear-button" class="confirm-btn">Evet, Sil</button>
+            <button id="cancel-clear-button" class="cancel-btn">Vazgeç</button>
+        </div>
+    </div>
+
+
+    <!-- === Firebase Kütüphaneleri ve Kodları === -->
+    <script type="module">
+        // Firebase SDK'larını import et
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp, 
+            setLogLevel, orderBy, where, getDocs, deleteDoc, doc, setDoc, getDoc 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- 1. SENİN FIREBASE YAPILANDIRMAN ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyAG6ur1zFww9ZzNtKM5Dz0zb3b0CcHqY6s",
+          authDomain: "jengacalisma.firebaseapp.com",
+          projectId: "jengacalisma",
+          storageBucket: "jengacalisma.firebasestorage.app",
+          messagingSenderId: "606939758971",
+          appId: "1:606939758971:web:9d99fa64e89904f9a1fdde",
+          measurementId: "G-4LKD0NR1PX"
+        };
+        
+        // Firebase'i başlat
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        // setLogLevel('debug'); 
+
+        // --- 2. Global Değişkenler ---
+        let myUserId = null;
+        let currentBlockCount = 0;
+        let pageLoadTime = new Date();
+        
+        // V16: Mesajlar listesini global tut
+        let allMessages = []; 
+
+        // Senkronize zamanlayıcı değişkenleri
+        let localTimerInterval = null; 
+        let timerDocUnsubscribe = null; 
+        const timerDocRef = doc(db, "timer", "mainState"); 
+        
+        // V15: Oylama değişkenleri
+        let myVote = null;
+        let partnerVote = null;
+        let timerStartedBy = null; 
+
+        const ALL_FLIRTS = [
+            { emoji: '👋', type: 'wave' }, { emoji: '😉', type: 'wink' }, { emoji: '😘', type: 'kiss' },
+            { emoji: '❤️', type: 'heart' }, { emoji: '🥰', type: 'in-love' }, { emoji: '🥳', type: 'partying' },
+            { emoji: '😡', type: 'angry' }, { emoji: '😔', type: 'sad' }, { emoji: '🙃', type: 'upside-down' },
+            { emoji: '😑', type: 'neutral' }, { emoji: '😴', type: 'sleepy' }
+        ];
+
+        let currentEmojiIndex = 0;
+        const emojiWindowSize = 5; 
+        const emojiButtonWidth = 40 + 5; 
+
+        // HTML Elemanları
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const mainLayout = document.querySelector('.main-layout');
+        const timerDisplay = document.getElementById('timer');
+        const minutesInput = document.getElementById('minutesInput');
+        const startButton = document.getElementById('startButton');
+        const pauseButton = document.getElementById('pauseButton');
+        const resetButton = document.getElementById('resetButton');
+        const jengaTower = document.getElementById('jengaTower');
+        const colorModal = document.getElementById('colorModal');
+        const colorPalette = document.getElementById('color-palette');
+        const addBlockButton = document.getElementById('addBlockButton');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chatInput');
+        const sendButton = document.getElementById('sendButton');
+        const flirtSliderContainer = document.getElementById('flirt-buttons-container');
+        const flirtPrevButton = document.getElementById('flirt-prev');
+        const flirtNextButton = document.getElementById('flirt-next');
+        const flirtOverlay = document.getElementById('flirt-overlay-main');
+        const passwordOverlay = document.getElementById('password-overlay');
+        const passwordBox = document.getElementById('password-box');
+        const passwordInput = document.getElementById('password-input');
+        const passwordButton = document.getElementById('password-button');
+        const passwordError = document.getElementById('password-error');
+        const THE_PASSWORD = "sevgilimiçokseviyorum";
+        const clearChatModal = document.getElementById('clear-chat-modal-overlay');
+        const confirmClearButton = document.getElementById('confirm-clear-button');
+        const cancelClearButton = document.getElementById('cancel-clear-button');
+        const chatMenuButton = document.getElementById('chat-menu-button');
+        const chatMenuPopover = document.getElementById('chat-menu-popover');
+        const clearChatButtonPopover = document.getElementById('clear-chat-button-popover');
+
+
+        // --- 3. Şifre Kontrolü ---
+        function checkPassword() {
+            const input = passwordInput.value;
+            if (input === THE_PASSWORD) {
+                passwordError.textContent = "";
+                passwordOverlay.style.display = 'none'; 
+                loadingIndicator.style.display = 'block'; 
+                startFirebaseLogin(); 
+            } else {
+                passwordError.textContent = "Hatalı şifre!";
+                passwordInput.value = "";
+                passwordBox.classList.add('shake');
+                setTimeout(() => {
+                    passwordBox.classList.remove('shake');
+                    passwordError.textContent = "";
+                }, 1000);
+            }
+        }
+        
+        // --- 4. Ana Başlatma ve Kimlik Dinleme ---
+        function startFirebaseLogin() {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    myUserId = user.uid;
+                    console.log("Kullanıcı ID:", myUserId);
+                    initializeAppListeners();
+                    loadingIndicator.style.display = 'none';
+                    mainLayout.style.display = 'grid';
+                } else {
+                    console.log("Kullanıcı yok, anonim giriş yapılıyor...");
+                    signInAnonymously(auth).catch((error) => {
+                        console.error("Anonim giriş hatası:", error);
+                        if (error.code === 'auth/configuration-not-found') {
+                            loadingIndicator.textContent = "HATA: Lütfen Firebase'de 'Authentication' bölümünden 'Anonymous' (Anonim) girişi etkinleştirin.";
+                        } else {
+                            loadingIndicator.textContent = `Bağlantı Hatası (${error.code}).`;
+                        }
+                    });
+                }
+            });
+        }
+
+        // --- 5. Veritabanı Dinleyicileri ---
+        function initializeAppListeners() {
+            // Jenga Kulesi dinleyicisi (Bu zaten verimliydi, tüm kule değişir)
+            const blocksQuery = query(collection(db, "jengaBlocks"), orderBy("blockIndex"));
+            onSnapshot(blocksQuery, (snapshot) => {
+                const blocks = [];
+                snapshot.forEach((doc) => blocks.push(doc.data()));
+                currentBlockCount = blocks.length;
+                renderJengaTower(blocks); 
+            }, (error) => {
+                console.error("Jenga sorgu hatası:", error);
+                if(error.code === 'failed-precondition') {
+                    alert("GEREKLİ KURULUM: Jenga kulesi için bir index oluşturmanız gerekiyor. Lütfen F12 ile konsolu açın, oradaki hatada bulunan linke tıklayarak index'i oluşturun.");
+                }
+            });
+
+            // === V16 VERİMLİ MESAJ DİNLEYİCİSİ ===
+            const messagesQuery = query(collection(db, "messages"), orderBy("timestamp"));
+            onSnapshot(messagesQuery, (snapshot) => {
+                // V16: Sadece değişiklikleri (eklenenleri) işle
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const newMsg = change.doc.data();
+                        allMessages.push(newMsg); // Mesajı global listeye ekle
+                        
+                        // V16: Sadece bu YENİ mesajı ekrana çiz
+                        renderSingleMessage(newMsg); 
+                    }
+                });
+                
+                // V16: Listenin tamamını yeniden sıralamaya GEREK YOK.
+                // Firebase zaten 'orderBy' ile sıralı getiriyor.
+                // renderMessages(allMessages); // Bu eski verimsiz yöntemdi.
+                
+                // V16: Sayfa ilk yüklendiğinde (allMessages boşken),
+                // tüm mesajları çizmek için özel bir kontrol
+                if (chatMessages.innerHTML === "" && allMessages.length > 0) {
+                     allMessages.forEach(msg => renderSingleMessage(msg, false));
+                     chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+
+            }, (error) => {
+                console.error("Mesaj sorgu hatası:", error);
+                if(error.code === 'failed-precondition') {
+                    alert("GEREKLİ KURULUM: Mesajlar için bir index oluşturmanız gerekiyor. Lütfen F12 ile konsolu açın, oradaki hatada bulunan linke tıklayarak index'i oluşturun.");
+                }
+            });
+            
+            // Flört dinleyicisi
+            const flirtsQuery = query(collection(db, "flirts"), where("timestamp", ">", pageLoadTime));
+            onSnapshot(flirtsQuery, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const flirt = change.doc.data();
+                        if (flirt.senderId !== myUserId) {
+                            playFlirtAnimation(flirt.type);
+                        }
+                        pageLoadTime = new Date(); 
+                    }
+                });
+            });
+            
+            // SENKRONİZE ZAMANLAYICI DİNLEYİCİSİ
+            timerDocUnsubscribe = onSnapshot(timerDocRef, (doc) => {
+                if (doc.exists()) {
+                    const state = doc.data();
+                    
+                    // V15: Oylama durumunu da senkronize et
+                    myVote = state.votes?.[myUserId] || null;
+                    partnerVote = Object.keys(state.votes || {}).find(uid => uid !== myUserId) 
+                                ? state.votes[Object.keys(state.votes).find(uid => uid !== myUserId)] 
+                                : null;
+                    timerStartedBy = state.startedBy || null;
+
+                    handleTimerStateChange(state);
+                } else {
+                    resetTimerToDB();
+                }
+            });
+        }
+
+        // --- 6. Arayüzü Çizme Fonksiyonları ---
+        
+        // V13'teki sağlam Jenga çizim mantığı
+        function renderJengaTower(blocks) {
+            jengaTower.innerHTML = ""; 
+            if (blocks.length === 0) return;
+            const layersMap = new Map();
+            let maxLayerIndex = 0;
+            for (const block of blocks) {
+                const layerIndex = Math.floor(block.blockIndex / 3);
+                if (layerIndex > maxLayerIndex) maxLayerIndex = layerIndex;
+                if (!layersMap.has(layerIndex)) layersMap.set(layerIndex, []);
+                layersMap.get(layerIndex).push(block);
+            }
+            for (let i = 0; i <= maxLayerIndex; i++) {
+                const layer = document.createElement('div');
+                layer.classList.add('jenga-layer');
+                const direction = (i % 2 === 0) ? 'horizontal' : 'vertical';
+                layer.classList.add(direction);
+                const layerBlocks = [null, null, null];
+                const blocksForThisLayer = layersMap.get(i);
+                if (blocksForThisLayer) {
+                    for (const block of blocksForThisLayer) {
+                        const blockInLayerIndex = block.blockIndex % 3;
+                        layerBlocks[blockInLayerIndex] = block; 
+                    }
+                }
+                for (const blockData of layerBlocks) {
+                    if (blockData) {
+                        const newBlock = document.createElement('div');
+                        newBlock.classList.add('mini-block');
+                        newBlock.style.backgroundColor = blockData.color;
+                        layer.appendChild(newBlock);
+                    } else {
+                        const placeholder = document.createElement('div');
+                        placeholder.classList.add('placeholder-block');
+                        layer.appendChild(placeholder);
+                    }
+                }
+                jengaTower.prepend(layer);
+            }
+            jengaTower.scrollTop = jengaTower.scrollHeight;
+        }
+        
+        // === V16 VERİMLİ MESAJ ÇİZME FONKSİYONU ===
+        // Artık tüm listeyi değil, SADECE BİR mesajı çiziyor.
+        function renderSingleMessage(msg, autoScroll = true) {
+            const wasScrolledToBottom = chatMessages.scrollTop + chatMessages.clientHeight >= chatMessages.scrollHeight - 20;
+
+            const msgElement = document.createElement('div');
+            msgElement.classList.add('message');
+            const textElement = document.createElement('span');
+            textElement.textContent = msg.text;
+            const timeElement = document.createElement('div');
+            timeElement.classList.add('message-time');
+            if (msg.timestamp) {
+                timeElement.textContent = new Date(msg.timestamp.seconds * 1000).toLocaleTimeString('tr-TR', {
+                    hour: '2-digit', minute: '2-digit'
+                });
+            }
+            msgElement.appendChild(textElement);
+            msgElement.appendChild(timeElement);
+            if (msg.userId === myUserId) msgElement.classList.add('sent');
+            else msgElement.classList.add('received');
+            chatMessages.appendChild(msgElement);
+
+            if (autoScroll && wasScrolledToBottom) {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+        
+        function playFlirtAnimation(type) {
+            flirtOverlay.innerHTML = ''; 
+            if (type === 'heart') {
+                flirtOverlay.style.display = 'block';
+                for (let i = 0; i < 20; i++) {
+                    const heart = document.createElement('div');
+                    heart.textContent = '❤️';
+                    heart.classList.add('heart-storm-emoji');
+                    heart.style.left = `${Math.random() * 100}vw`;
+                    heart.style.animationDelay = `${Math.random() * 1}s`;
+                    flirtOverlay.appendChild(heart);
+                }
+                setTimeout(() => {
+                    flirtOverlay.style.display = 'none';
+                    flirtOverlay.innerHTML = '';
+                }, 2000);
+            } else {
+                const flirtData = ALL_FLIRTS.find(f => f.type === type);
+                let emoji = flirtData ? flirtData.emoji : '❓';
+                const emojiEl = document.createElement('div');
+                emojiEl.textContent = emoji;
+                emojiEl.className = 'flirt-emoji-pop';
+                flirtOverlay.appendChild(emojiEl);
+                flirtOverlay.style.display = 'flex'; 
+                setTimeout(() => {
+                    flirtOverlay.style.display = 'none';
+                    flirtOverlay.innerHTML = '';
+                }, 1500);
+            }
+        }
+
+        // --- 7. Veritabanına Yazma Fonksiyonları ---
+
+        // Jenga Tuğlası Ekleme (V15: Oylama sonrası)
+        async function addJengaBlockToDB() {
+            // Sadece 'anlaşılan' renk ile eklenebilir
+            if (!myVote || myVote !== partnerVote) return; 
+            const agreedColor = myVote; 
+            
+            try {
+                addBlockButton.disabled = true;
+                addBlockButton.textContent = "Ekleniyor...";
+                
+                await addDoc(collection(db, "jengaBlocks"), {
+                    color: agreedColor,
+                    blockIndex: currentBlockCount,
+                    timestamp: serverTimestamp(),
+                    userId: timerStartedBy // Tuğlayı 'başlatan' kişi kazanır
+                });
+                
+                // Başarıyla eklendikten sonra zamanlayıcıyı sıfırla
+                await resetTimerToDB(); 
+                
+            } catch (error) {
+                console.error("Jenga taşı eklenirken hata:", error);
+                alert("Hata: Jenga taşı eklenemedi.");
+            }
+        }
+        
+        async function sendMessageToDB() {
+            const messageText = chatInput.value.trim();
+            if (messageText === "") return;
+            chatInput.value = "";
+            try {
+                await addDoc(collection(db, "messages"), {
+                    text: messageText,
+                    userId: myUserId,
+                    timestamp: serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Mesaj gönderilirken hata:", error);
+                chatInput.value = messageText;
+                alert("Hata: Mesaj gönderilemedi.");
+            }
+        }
+        
+        async function sendFlirtToDB(type) {
+            try {
+                await addDoc(collection(db, "flirts"), {
+                    type: type,
+                    senderId: myUserId,
+                    timestamp: serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Flört gönderilirken hata:", error);
+            }
+        }
+
+        async function deleteAllMessages() {
+            confirmClearButton.disabled = true;
+            confirmClearButton.textContent = "Siliniyor...";
+            try {
+                const messagesQuery = query(collection(db, "messages"));
+                const querySnapshot = await getDocs(messagesQuery);
+                const deletions = [];
+                querySnapshot.forEach((doc) => deletions.push(deleteDoc(doc.ref)));
+                await Promise.all(deletions);
+                console.log("Sohbet temizlendi.");
+                
+                // V16: Global listeyi ve ekranı temizle
+                allMessages = [];
+                chatMessages.innerHTML = "";
+                
+            } catch (error) {
+                console.error("Sohbet temizlenirken hata:", error);
+                alert("Hata: Mesajlar silinemedi.");
+            } finally {
+                clearChatModal.style.display = 'none';
+                confirmClearButton.disabled = false;
+                confirmClearButton.textContent = "Evet, Sil";
+            }
+        }
+        
+        // --- 8. SENKRONİZE ZAMANLAYICI KONTROLLERİ (V15: Oylama Mantıklı) ---
+        
+        // Zamanlayıcı durumunu Firestore'dan dinle
+        function handleTimerStateChange(state) {
+            if (localTimerInterval) clearInterval(localTimerInterval);
+            
+            const now = Date.now();
+            const endTime = state.endTime?.toMillis() || 0;
+            const remaining = Math.max(0, Math.ceil((endTime - now) / 1000));
+
+            if (state.status === 'running') {
+                document.body.classList.add('focus-mode');
+                updateTimerDisplay(remaining);
+                
+                localTimerInterval = setInterval(() => {
+                    const now = Date.now();
+                    const endTime = state.endTime?.toMillis() || 0;
+                    const remaining = Math.max(0, Math.ceil((endTime - now) / 1000));
+                    updateTimerDisplay(remaining);
+                    
+                    if (remaining <= 0) {
+                        clearInterval(localTimerInterval);
+                        // V14 Düzeltmesi: 00:00'ı ilk gören bitişi tetikler
+                        finishTimerToDB(state.startedBy);
+                    }
+                }, 1000);
+                
+                startButton.disabled = true;
+                pauseButton.disabled = false;
+                resetButton.disabled = false;
+                minutesInput.disabled = true;
+                colorModal.style.display = 'none'; // Çalışırken modalı gizle
+                
+            } else if (state.status === 'paused') {
+                document.body.classList.remove('focus-mode');
+                updateTimerDisplay(state.remainingSeconds || 0);
+                
+                startButton.disabled = false;
+                pauseButton.disabled = true;
+                resetButton.disabled = false;
+                minutesInput.disabled = true;
+                colorModal.style.display = 'none';
+                
+            } else if (state.status === 'finished') {
+                // Durum: Bitti (Ödül ve Oylama zamanı)
+                document.body.classList.remove('focus-mode');
+                updateTimerDisplay(0);
+                showColorModal(); // V15: Yeni modal gösterme fonksiyonu
+                
+                startButton.disabled = true;
+                pauseButton.disabled = true;
+                resetButton.disabled = false; 
+                minutesInput.disabled = true;
+                
+            } else { // idle (boşta)
+                document.body.classList.remove('focus-mode');
+                const idleSeconds = parseInt(minutesInput.value) * 60 || 60;
+                updateTimerDisplay(idleSeconds);
+                
+                startButton.disabled = false;
+                pauseButton.disabled = true;
+                resetButton.disabled = true;
+                minutesInput.disabled = false;
+                colorModal.style.display = 'none';
+            }
+        }
+        
+        // Zamanlayıcıyı BAŞLAT
+        async function startTimerToDB() {
+            const durationInSeconds = parseInt(minutesInput.value) * 60 || 60;
+            const now = new Date();
+            const endTime = new Date(now.getTime() + durationInSeconds * 1000);
+            
+            const newState = {
+                status: 'running',
+                endTime: endTime,
+                startedBy: myUserId, 
+                votes: {} // V15: Oyları sıfırla
+            };
+            try { await setDoc(timerDocRef, newState); } catch (e) { console.error("Timer başlatılamadı:", e); }
+        }
+
+        // Zamanlayıcıyı Bitir (V14'teki sağlam mantık)
+        async function finishTimerToDB(starterId) {
+            const currentStateDoc = await getDoc(timerDocRef);
+            if (currentStateDoc.exists() && currentStateDoc.data().status !== 'running') {
+                return; // Zaten bitmiş, tekrar tetikleme
+            }
+            const newState = {
+                status: 'finished',
+                endTime: null,
+                startedBy: starterId,
+                remainingSeconds: 0,
+                votes: {} // V15: Oyları sıfırla
+            };
+            try { await setDoc(timerDocRef, newState); } catch (e) { console.error("Timer 'finished' olarak güncellenemedi:", e); }
+        }
+        
+        // Zamanlayıcıyı DURAKLAT
+        async function pauseTimerToDB() {
+            if (localTimerInterval) clearInterval(localTimerInterval);
+            
+            const currentStateDoc = await getDoc(timerDocRef);
+            if (!currentStateDoc.exists() || currentStateDoc.data().status !== 'running') return;
+            const currentState = currentStateDoc.data();
+            
+            const endTime = currentState.endTime.toMillis();
+            const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+            
+            const newState = {
+                status: 'paused',
+                remainingSeconds: remaining,
+                startedBy: currentState.startedBy,
+                votes: currentState.votes || {} // Oyları koru
+            };
+            try { await setDoc(timerDocRef, newState); } catch (e) { console.error("Timer duraklatılamadı:", e); }
+        }
+        
+        // Zamanlayıcıya DEVAM ET
+        async function resumeTimerToDB() {
+            const currentStateDoc = await getDoc(timerDocRef);
+            if (!currentStateDoc.exists() || currentStateDoc.data().status !== 'paused') return;
+            const currentState = currentStateDoc.data();
+
+            const remainingSeconds = currentState.remainingSeconds || 0;
+            const now = new Date();
+            const newEndTime = new Date(now.getTime() + remainingSeconds * 1000);
+
+            const newState = {
+                status: 'running',
+                endTime: newEndTime,
+                startedBy: currentState.startedBy,
+                votes: currentState.votes || {} // Oyları koru
+            };
+            try { await setDoc(timerDocRef, newState); } catch (e) { console.error("Timer devam ettirilemedi:", e); }
+        }
+
+        // Zamanlayıcıyı SIFIRLA
+        async function resetTimerToDB() {
+            if (localTimerInterval) clearInterval(localTimerInterval);
+            
+            const newState = {
+                status: 'idle', 
+                endTime: null,
+                startedBy: null,
+                remainingSeconds: 0,
+                votes: {} // V15: Oyları sıfırla
+            };
+            try { await setDoc(timerDocRef, newState); } catch (e) { console.error("Timer sıfırlanamadı:", e); }
+        }
+        
+        // Lokal zamanlayıcıyı güncelle (sadece ekran)
+        function updateTimerDisplay(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        // --- 9. Renk Paleti ve V15 OYLAMA ---
+        
+        // Paleti oluştur (sadece bir kez)
+        function createColorPalette() {
+            colorPalette.innerHTML = ""; 
+            const colors = [
+                '--c1', '--c2', '--c3', '--c4', '--c5', '--c6', '--c7', '--c8',
+                '--c9', '--c10', '--c11', '--c12', '--c13', '--c14', '--c15', '--c16'
+            ];
+            
+            colors.forEach((color) => {
+                const swatch = document.createElement('div');
+                swatch.classList.add('color-swatch');
+                const colorValue = `var(${color})`;
+                swatch.style.backgroundColor = colorValue;
+                swatch.dataset.color = colorValue;
+                
+                swatch.addEventListener('click', () => {
+                    // V15: Oy ver
+                    voteForColor(colorValue);
+                });
+                colorPalette.appendChild(swatch);
+            });
+        }
+        
+        // V15: Oyları veritabanına yaz
+        async function voteForColor(color) {
+            if (!myUserId) return;
+            myVote = color; // Lokal oyumuzu hemen ayarla
+            
+            const voteData = {
+                [`votes.${myUserId}`]: color // Sadece kendi oyumuzu günceller
+            };
+            
+            try {
+                // setDoc with merge:true, sadece 'votes' alanını günceller
+                await setDoc(timerDocRef, voteData, { merge: true });
+            } catch (e) {
+                console.error("Oy verilemedi:", e);
+            }
+        }
+
+        // V15: Renk modalını göster (Oylama mantığı)
+        function showColorModal() {
+            colorModal.style.display = 'flex';
+            updateVoteUI(); // Oylama arayüzünü güncelle
+        }
+        
+        // V15: Oylama arayüzünü güncelle
+        function updateVoteUI() {
+            // Önceki oylama göstergelerini temizle
+            document.querySelectorAll('.vote-indicator').forEach(v => v.remove());
+            
+            let agreement = false; // Anlaşma sağlandı mı?
+            
+            // Benim oyumu göster (✓)
+            if (myVote) {
+                const mySwatch = colorPalette.querySelector(`.color-swatch[data-color="${myVote}"]`);
+                if (mySwatch) {
+                    const myVoteIndicator = document.createElement('div');
+                    myVoteIndicator.classList.add('vote-indicator');
+                    myVoteIndicator.textContent = '✓';
+                    mySwatch.appendChild(myVoteIndicator);
+                }
+            }
+            
+            // Partnerin oyunu göster (●)
+            if (partnerVote) {
+                const partnerSwatch = colorPalette.querySelector(`.color-swatch[data-color="${partnerVote}"]`);
+                if (partnerSwatch) {
+                    const partnerVoteIndicator = document.createElement('div');
+                    partnerVoteIndicator.classList.add('vote-indicator', 'partner');
+                    partnerVoteIndicator.textContent = '●';
+                    partnerSwatch.appendChild(partnerVoteIndicator);
+                }
+            }
+            
+            // Anlaşma kontrolü
+            if (myVote && partnerVote && myVote === partnerVote) {
+                agreement = true;
+            }
+            
+            // Tuğla ekleme butonunun durumunu ayarla
+            // Sadece "anlaşma varsa" VE "zamanlayıcıyı başlatan bizsek"
+            if (agreement && myUserId === timerStartedBy) {
+                addBlockButton.disabled = false;
+                addBlockButton.textContent = "Anlaşıldı! Tuğlayı Ekle";
+            } else if (agreement && myUserId !== timerStartedBy) {
+                addBlockButton.disabled = true;
+                addBlockButton.textContent = "Anlaşıldı! Partnerin ekliyor...";
+            } else {
+                addBlockButton.disabled = true;
+                addBlockButton.textContent = "Lütfen anlaşma sağlayın...";
+            }
+        }
+        
+        // --- 10. Flört Kaydırıcı Fonksiyonları ---
+        function initializeFlirtSlider() {
+            flirtSliderContainer.innerHTML = '';
+            ALL_FLIRTS.forEach(flirt => {
+                const button = document.createElement('button');
+                button.classList.add('flirt-button');
+                button.textContent = flirt.emoji;
+                button.addEventListener('click', () => sendFlirtToDB(flirt.type));
+                flirtSliderContainer.appendChild(button);
+            });
+            updateSliderPosition(); 
+        }
+        function moveSlider(direction) {
+            const maxIndex = ALL_FLIRTS.length - emojiWindowSize;
+            if (direction === 'next') {
+                currentEmojiIndex++;
+                if (currentEmojiIndex > maxIndex) currentEmojiIndex = maxIndex;
+            } else if (direction === 'prev') {
+                currentEmojiIndex--;
+                if (currentEmojiIndex < 0) currentEmojiIndex = 0;
+            }
+            updateSliderPosition();
+        }
+        function updateSliderPosition() {
+            const maxIndex = ALL_FLIRTS.length - emojiWindowSize;
+            flirtSliderContainer.style.transform = `translateX(-${currentEmojiIndex * emojiButtonWidth}px)`;
+            flirtPrevButton.disabled = (currentEmojiIndex === 0);
+            flirtNextButton.disabled = (currentEmojiIndex >= maxIndex);
+        }
+
+        // --- 11. Olayları Başlatma (Event Listeners) ---
+        
+        passwordButton.addEventListener('click', checkPassword);
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        startButton.addEventListener('click', async () => {
+            const currentStateDoc = await getDoc(timerDocRef);
+            if (currentStateDoc.exists() && currentStateDoc.data().status === 'paused') {
+                resumeTimerToDB();
+            } else {
+                startTimerToDB();
+            }
+        });
+        pauseButton.addEventListener('click', pauseTimerToDB);
+        resetButton.addEventListener('click', resetTimerToDB);
+        
+        addBlockButton.addEventListener('click', addJengaBlockToDB);
+        
+        sendButton.addEventListener('click', sendMessageToDB);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessageToDB();
+        });
+        
+        flirtPrevButton.addEventListener('click', () => moveSlider('prev'));
+        flirtNextButton.addEventListener('click', () => moveSlider('next'));
+        
+        chatMenuButton.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            const isHidden = chatMenuPopover.style.display === 'none' || chatMenuPopover.style.display === '';
+            chatMenuPopover.style.display = isHidden ? 'block' : 'none';
+        });
+        clearChatButtonPopover.addEventListener('click', () => {
+            chatMenuPopover.style.display = 'none';
+            clearChatModal.style.display = 'flex';
+        });
+        cancelClearButton.addEventListener('click', () => {
+            clearChatModal.style.display = 'none';
+        });
+        confirmClearButton.addEventListener('click', deleteAllMessages);
+        
+        window.addEventListener('click', (e) => {
+            if (!chatMenuPopover.contains(e.target) && e.target !== chatMenuButton) {
+                chatMenuPopover.style.display = 'none';
+            }
+        });
+        
+        // Başlangıç fonksiyonları
+        initializeFlirtSlider(); 
+        createColorPalette(); // Paleti SADECE BİR KEZ oluştur
+
+    </script>
+</body>
+</html>
